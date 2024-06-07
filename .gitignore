@@ -11,6 +11,9 @@ node_modules/
 # production
 build/
 
+# python virtual env
+myenv/
+
 # misc
 .DS_Store
 .env.local
