@@ -1,6 +1,7 @@
 import unittest
 from unittest.mock import patch
 from extract_youtube import *
+from bert_summarizer import *
 
 class TestExtractYTSummarizer(unittest.TestCase):
 
@@ -66,7 +67,27 @@ class TestExtractYTSummarizer(unittest.TestCase):
 
 
 class TestBertSummarizer(unittest.TestCase):
-    pass
+
+    @patch('bert_summarizer.Summarizer')
+    def test_summarize_text(self):
+
+        example_text = '''
+        The Chrysler Building, the famous art deco New York skyscraper, will be sold for a small fraction of its previous sales price.
+        The deal, first reported by The Real Deal, was for $150 million, according to a source familiar with the deal.
+        Mubadala, an Abu Dhabi investment fund, purchased 90% of the building for $800 million in 2008.
+        Real estate firm Tishman Speyer had owned the other 10%.
+        The buyer is RFR Holding, a New York real estate company.
+        Officials with Tishman and RFR did not immediately respond to a request for comments.
+        It's unclear when the deal will close.
+        The building sold fairly quickly after being publicly placed on the market only two months ago.
+        The sale was handled by CBRE Group.
+        '''
+
+        result = summarize_text(example_text)
+        self.assertIsInstance(result, str)
+
+        if len(example_text) > 600:
+            self.assertGreaterEqual(len(result), 40)
 
 class TestQuestionGeneration(unittest.TestCase):
     pass
