@@ -2,6 +2,7 @@ import unittest
 from unittest.mock import patch
 from extract_youtube import *
 from bert_summarizer import *
+from question_generator import *
 
 class TestExtractYTSummarizer(unittest.TestCase):
 
@@ -22,7 +23,7 @@ class TestExtractYTSummarizer(unittest.TestCase):
 
         return list_of_dicts
 
-    @patch('extract_youtube.YouTubeTransccriptAPI')
+    @patch('extract_youtube.YouTubeTranscriptAPI')
     def test_fetch_transcript(self):
 
         # example url (click it for a surprise lol!)
@@ -55,7 +56,7 @@ class TestExtractYTSummarizer(unittest.TestCase):
         
 
 
-    @patch('extract_youtube.YouTubeTransccriptAPI')
+    @patch('extract_youtube.YouTubeTranscriptAPI')
     def test_clean_transcript(self):
         # call instance of get_transcripts
         mock_video_id = "https://www.youtube.com/watch?v=dQw4w9WgXcQ&ab_channel=RickAstley"
@@ -90,7 +91,26 @@ class TestBertSummarizer(unittest.TestCase):
             self.assertGreaterEqual(len(result), 40)
 
 class TestQuestionGeneration(unittest.TestCase):
-    pass
+
+    @patch('question_generation.pipeline')
+    def test_question_generation(self):
+
+        expected_keys = ['question', 'answer']
+
+        mock_video_id = "https://www.youtube.com/watch?v=dQw4w9WgXcQ&ab_channel=RickAstley"
+
+        questions_generated = generate_questions_from_summary(mock_video_id)
+
+        for check in questions_generated:
+
+            self.assertIsInstance(check, list)
+
+            for key, value in check.items():
+                self.assertEqual(key, expected_keys)
+                
+                if key == 'answer' or 'question':
+                    self.assertIsInstance(value, str)
+
 
 if __name__ == '__main__':
     unittest.main()

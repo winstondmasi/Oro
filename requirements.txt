@@ -30,6 +30,7 @@ MarkupSafe==2.1.5
 mdurl==0.1.2
 mock==3.0.5
 murmurhash==1.0.10
+nltk==3.8.1
 numpy==1.26.4
 packaging==24.0
 preshed==3.0.9
