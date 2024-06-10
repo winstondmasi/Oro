@@ -1,8 +1,11 @@
+import json
 import unittest
 from unittest.mock import patch
+
 from extract_youtube import *
 from bert_summarizer import *
 from question_generator import *
+from flashcards import *
 
 class TestExtractYTSummarizer(unittest.TestCase):
 
@@ -110,6 +113,37 @@ class TestQuestionGeneration(unittest.TestCase):
                 
                 if key == 'answer' or 'question':
                     self.assertIsInstance(value, str)
+
+class TestFlashCards(unittest.TestCase):
+
+    @patch('flashcards.requests.post')
+    def test_connection_to_AnkiConnect(self, mock_post):
+
+        mock_repsonse = {
+            "status": "success",
+            "data":{
+                "id": 123,
+                "name": "test"
+            }
+        }
+
+        mock_repsonse.return_value.status_code = 200
+        mock_post.return_value.json.return_value = mock_repsonse
+
+        url = "http://localhost:8765"
+
+        payload = {
+            "name": "test"
+        }
+
+        response = anki_request(url, payload)
+
+        self.assertEqual(response['status'], 'success')
+        self.assertEqual(response['data']['id'], 123)
+        self.assertEqual(response['data']['name'], 'test')
+
+        mock_post.assert_called_once_with(url, data=json.dumps(payload), 
+                                          headers={'Content-Type': 'application/json'})
 
 
 if __name__ == '__main__':
