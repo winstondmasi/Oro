@@ -1,4 +1,4 @@
-from summarizer import Summarizer # type: ignore
+from summarizer import Summarizer 
 from extract_youtube import *
 
 # summarize text using bert

@@ -1,4 +1,4 @@
-from youtube_transcript_api import YouTubeTranscriptApi  # type: ignore
+from youtube_transcript_api import YouTubeTranscriptApi 
 
 # retrieve the transcript of a given Youtube video
 def fetch_transcript(self, video_id):

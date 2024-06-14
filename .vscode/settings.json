@@ -1,6 +1,7 @@
 {
     "python.analysis.extraPaths": [
         "./backend/bert_summarizer",
-        "./backend/extract_youtube"
+        "./backend/extract_youtube",
+        "./backend"
     ]
 }

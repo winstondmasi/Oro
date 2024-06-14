@@ -26,7 +26,7 @@ class TestExtractYTSummarizer(unittest.TestCase):
 
         return list_of_dicts
 
-    @patch('extract_youtube.YouTubeTranscriptAPI')
+    @patch('extract_youtube.fetch_transcript')
     def test_fetch_transcript(self):
 
         # example url (click it for a surprise lol!)
@@ -59,7 +59,7 @@ class TestExtractYTSummarizer(unittest.TestCase):
         
 
 
-    @patch('extract_youtube.YouTubeTranscriptAPI')
+    @patch('extract_youtube.clean_transcript')
     def test_clean_transcript(self):
         # call instance of get_transcripts
         mock_video_id = "https://www.youtube.com/watch?v=dQw4w9WgXcQ&ab_channel=RickAstley"
@@ -72,7 +72,7 @@ class TestExtractYTSummarizer(unittest.TestCase):
 
 class TestBertSummarizer(unittest.TestCase):
 
-    @patch('bert_summarizer.Summarizer')
+    @patch('bert_summarizer.summarize_text')
     def test_summarize_text(self):
 
         example_text = '''
@@ -95,7 +95,7 @@ class TestBertSummarizer(unittest.TestCase):
 
 class TestQuestionGeneration(unittest.TestCase):
 
-    @patch('question_generation.pipeline')
+    @patch('question_generation.generate_questions_from_summary')
     def test_question_generation(self):
 
         expected_keys = ['question', 'answer']
@@ -116,34 +116,28 @@ class TestQuestionGeneration(unittest.TestCase):
 
 class TestFlashCards(unittest.TestCase):
 
-    @patch('flashcards.requests.post')
-    def test_connection_to_AnkiConnect(self, mock_post):
+    @patch('flashcards.create_model')
+    @patch('flashcards.create_deck')
+    @patch('flashcards.add_cards_to_anki')
+    @patch('flashcards.write_deck_to_file')
+    def test_create_apkg(self, mock_write, mock_add, mock_create_deck, mock_create_model):
 
-        mock_repsonse = {
-            "status": "success",
-            "data":{
-                "id": 123,
-                "name": "test"
-            }
-        }
+        mock_model_id = 1234
+        mock_deck_id = 5678
 
-        mock_repsonse.return_value.status_code = 200
-        mock_post.return_value.json.return_value = mock_repsonse
+        mock_model_name = "test_model"
+        mock_deck_name = "test_deck"
 
-        url = "http://localhost:8765"
+        mock_cards = [('what is BERT?', 'BERT is a transformer-based model')]
 
-        payload = {
-            "name": "test"
-        }
+        mock_package = 'test_package.apkg'
 
-        response = anki_request(url, payload)
+        create_apkg(mock_deck_name, mock_model_name, mock_cards, mock_package)
 
-        self.assertEqual(response['status'], 'success')
-        self.assertEqual(response['data']['id'], 123)
-        self.assertEqual(response['data']['name'], 'test')
-
-        mock_post.assert_called_once_with(url, data=json.dumps(payload), 
-                                          headers={'Content-Type': 'application/json'})
+        mock_create_model.assert_called_once_with(mock_model_id, mock_model_name)
+        mock_create_deck.assert_called_once_with(mock_deck_id, mock_deck_name)
+        mock_add.assert_called_once_with(mock_deck_id, mock_model_id, mock_cards)
+        mock_write.assert_called_once_with(mock_deck_id, mock_package)
 
 
 if __name__ == '__main__':
