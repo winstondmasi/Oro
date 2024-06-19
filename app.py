@@ -4,6 +4,8 @@ from flask_cors import CORS
 from bert_summarizer import *
 from flashcards import *
 
+import traceback
+
 app = Flask(__name__)
 CORS(app)
 
@@ -12,7 +14,7 @@ def home():
     return render_template('index.html')
 
 @app.route('/backend/video_id', methods=['POST'])
-def get_summary():
+def get_summary_or_flashcards():
     """
     Endpoint for retrieving a summary of a video by its ID.
 
@@ -32,17 +34,7 @@ def get_summary():
         {
             "response": "SUMMARY"
         }
-    """
-    video_id = request.json
-    received_video_id = video_id.get('video_id', '')
 
-    result = summarize_transcript(received_video_id)
-
-    return jsonify(response=f"Summary: {result}")
-
-@app.route('/backend/flashcards', methods=['POST'])
-def get_flashcards():
-    """
     Retrieves flashcards based on a video ID received in a POST request.
     Calls 'generate_questions_from_summary' to generate questions from the summary of the video.
     Creates an Anki package (apkg) with the generated flashcards.
@@ -51,18 +43,24 @@ def get_flashcards():
         The Anki package (apkg) containing the flashcards.
     """
     video_id = request.json
-    received_video_id = video_id.get('video_id', '') 
+    received_video_id = video_id.get('video_id', '')
 
-    dict_cards = generate_questions_from_summary(received_video_id)
-    tuple_cards = dict_to_tuple(dict_cards)
+    request_type = video_id.get('request_type', '')
 
-    flashcards = create_apkg('Deck', 'Summary', tuple_cards, 'flashcards.apkg')
-    return flashcards
+    if request_type == 'flashcards':
+        dict_cards = generate_questions_from_summary(received_video_id)
+        tuple_cards = dict_to_tuple(dict_cards)
 
-@app.route('/download', methods=['GET'])
-def download():
-    flashcards = get_flashcards()
-    return send_file(flashcards, as_attachment=True)
+        flashcards = create_apkg('Deck', 'Summary', tuple_cards, 'flashcards.apkg')
+        return send_file(flashcards, as_attachment=True,download_name='flashcards.apkg') 
+    if request_type == 'summary':
+        result = summarize_transcript(received_video_id)
+        return jsonify(response=f"Summary: {result}")
+
+@app.errorhandler(500)
+def internal_server_error(error):
+    app.logger.error('Server Error: %s', (error), exc_info=True)
+    traceback.print_exc()
 
 if __name__ == '__main__':
     app.run(debug=True)

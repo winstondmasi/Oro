@@ -1,44 +1,86 @@
 import logo from './logo.svg';
 import './App.css';
 import './index.css';
-import React from 'react';
+import React, { useState } from 'react';
+import axios from 'axios';
+
 
 function App(){
 
-    return(
-      <>
-        <div className="grid grid-cols-1 gap-4 p-8 bg-gray-900 text-white">
-          <div className="grid grid-cols-[300px_1fr_300px] gap-4">
-            <div className="bg-gray-800 rounded-lg p-6 flex flex-col gap-4">
-              <div className="text-2xl font-bold">Youtube Summarize</div>
+  const[input, setInput] = useState('');
+  const[summary, SetSummary] = useState('');
+  const[flashcards, SetFlashcards] = useState(null);
+
+  // handle summary submission
+  const handleSubmit = async (event) =>{
+    event.preventDefault();
+    try {
+      const response = axios.post('http://127.0.0.1:5000/backend/video_id', { video_id: input ,  request_type: 'summary'});
+      SetSummary(response.data.response);
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    }
+  }
+
+  // handle flashcard generation
+  const handleGenerateFlashcards = async (event) =>{
+    event.preventDefault();
+    try {
+      const response = axios.post('http://127.0.0.1:5000/backend/video_id', { video_id: input ,  request_type: 'flashcards'});
+      SetFlashcards(response.data.response);
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    }
+  }
+  
+
+  return(
+    <>
+      <div className="grid grid-cols-1 gap-4 p-8 bg-gray-900 text-white">
+        <div className="grid grid-cols-[300px_1fr_300px] gap-4">
+          <div className="bg-gray-800 rounded-lg p-6 flex flex-col gap-4 min-w-[350px]">
+            <div className="text-3xl font-bold">YouTube Summarize</div>
+            <div className="flex gap-2">
               <input
                 type="text"
                 placeholder="Enter YouTube URL"
-                className="bg-gray-700 border-none focus:ring-2 focus:ring-primary"
+                className="bg-gray-700 border-none focus:ring-2 focus:ring-primary w-[400px]"
+                value={input}
+                onChange={(e) => setInput(e.target.value)}
               />
+              <button className="bg-primary hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" onClick={handleSubmit}>⏎</button>
             </div>
-            <div className="bg-gray-800 rounded-lg p-6 flex flex-col gap-4 justify-center items-center">
-              <div className="text-2xl font-bold">Flash cards to download here</div>
-            </div>
-            <div />
           </div>
-          <div className="bg-gray-800 rounded-lg p-6 flex flex-col gap-4 flex-1 h-[500px]">
-            <div className="text-2xl font-bold">Summary will appear here</div>
+          <div className="bg-gray-800 rounded-lg p-6 flex flex-col gap-4 justify-center items-center ml-20">
+            <button className="bg-purple hover:bg-purple-700 text-white text-2xl font-bold py-2 px-4 rounded" onClick={handleGenerateFlashcards}>
+              Flash cards to Download here
+            </button>
+            {flashcards && (
+              <a href={flashcards} download={"flashcards.apkg"}>
+                Download Flashcards
+              </a>
+            )}
+          </div>
+          <div />
+        </div>
+        <div className="bg-gray-800 rounded-lg p-6 flex flex-col gap-4 flex-1 h-[1200px]">
+          <div className="text-2xl font-bold">Summary will appear here</div>
+          {!summary && (
             <p className="text-gray-400">
               This is a longer summary that will take up more vertical space. It will provide more details and information
-              about the YouTube video that was summarized.
-            </p>
-            <p className="text-gray-400">
+              about the YouTube video that was summarized.<br /><br />
+
               Additional details and insights can be added here to make the summary more comprehensive and informative for
-              the user.
-            </p>
-            <p className="text-gray-400">
+              the user. <br /><br />
+
               The summary can include key points, important quotes, and a high-level overview of the video's content.
             </p>
-          </div>
+          )}
+          { summary && <p>{summary}</p>} {/* display the summary if it exists */}
         </div>
-      </>
-    );
+      </div>
+    </>
+  );
 }
 
 export default App;

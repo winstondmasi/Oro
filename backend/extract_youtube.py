@@ -1,14 +1,14 @@
 from youtube_transcript_api import YouTubeTranscriptApi 
 
 # retrieve the transcript of a given Youtube video
-def fetch_transcript(self, video_id):
+def fetch_transcript(video_id):
 
     yt_transcript = YouTubeTranscriptApi.get_transcript(video_id)
 
     return yt_transcript
 
 # cleans and concantenate the transcript text
-def clean_transcript(self, transcript):
+def clean_transcript(transcript):
 
     strings = []
 
@@ -17,13 +17,13 @@ def clean_transcript(self, transcript):
             if key == 'text':
                 strings.append(value)
 
-    strings = ''.join(strings)
+    strings = ' '.join(strings)
     strings = strings.lower()
     return strings
 
 
 # fetch and clean transcript in one method(step)
-def fetch_and_clean_transcript(self, video_id):
+def fetch_and_clean_transcript(video_id):
 
     r_transcript = fetch_transcript(video_id)
 
