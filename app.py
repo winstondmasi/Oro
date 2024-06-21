@@ -49,18 +49,23 @@ def get_summary_or_flashcards():
 
     if request_type == 'flashcards':
         dict_cards = generate_questions_from_summary(received_video_id)
+
         tuple_cards = dict_to_tuple(dict_cards)
 
         flashcards = create_apkg('Deck', 'Summary', tuple_cards, 'flashcards.apkg')
+
         return send_file(flashcards, as_attachment=True,download_name='flashcards.apkg') 
     if request_type == 'summary':
         result = summarize_transcript(received_video_id)
+
         return jsonify(response=f"Summary: {result}")
 
+'''
 @app.errorhandler(500)
 def internal_server_error(error):
     app.logger.error('Server Error: %s', (error), exc_info=True)
     traceback.print_exc()
+'''
 
 if __name__ == '__main__':
     app.run(debug=True)

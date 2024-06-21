@@ -17,5 +17,5 @@ def generate_questions_from_summary(video_id):
 def dict_to_tuple(dictionary):
     result = []
     for dic in dictionary:
-        result.append([dic['question'], dic['answer']])
+        result.append(tuple([dic['question'], dic['answer']]))
     return result

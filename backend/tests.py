@@ -83,6 +83,11 @@ class TestQuestionGeneration(unittest.TestCase):
         self.assertEqual(questions_generated, mock_nlp.return_value)
         mock_nlp.assert_called_once_with(text)
 
+    def test_multiple_key_value_pairs(self):
+        data = [{'answer': '42', 'question': 'What is the answer to life, the universe and everything?'}]
+        result = dict_to_tuple(data)
+        self.assertEqual(result, [('What is the answer to life, the universe and everything?', '42')])
+
 class TestFlashCards(unittest.TestCase):
 
     def test_add_cards_to_anki(self):
@@ -132,11 +137,13 @@ class TestFlashCards(unittest.TestCase):
         mock_add_cards_to_anki.assert_called_once_with(mock_deck, mock_model, mock_cards)
         mock_write_deck_to_file.assert_called_once_with(mock_deck, mock_package)
 
+
 class TestFlaskGetSummaryOrFlashcards(unittest.TestCase):
     def setUp(self):
         self.app = app.test_client()
         self.app.testing = True
 
+    
     @patch('app.summarize_transcript')
     def test_get_summary(self, mock_summarize_transcript):
         mock_summarize_transcript.return_value = "summary"
@@ -144,6 +151,7 @@ class TestFlaskGetSummaryOrFlashcards(unittest.TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertIn(f"Summary: {mock_summarize_transcript.return_value}", response.get_data(as_text=True))
 
+    
     @patch('app.generate_questions_from_summary')
     def test_get_flashcards(self, mock_created_apkg):
         mock_created_apkg.return_value = "flashcards.apkg"
@@ -152,7 +160,6 @@ class TestFlaskGetSummaryOrFlashcards(unittest.TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertIn(b"flashcards.apkg", response.data)
         self.assertEqual(mock_created_apkg.call_count, 1)
-    
     
 if __name__ == '__main__':
     unittest.main()
