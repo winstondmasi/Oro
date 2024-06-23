@@ -1,4 +1,4 @@
-from pipelines import pipeline 
+from question_generation.pipelines import pipeline
 from bert_summarizer import *
 
 # generate questiosn based on the provided text

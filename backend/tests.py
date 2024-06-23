@@ -147,16 +147,16 @@ class TestFlaskGetSummaryOrFlashcards(unittest.TestCase):
     @patch('app.summarize_transcript')
     def test_get_summary(self, mock_summarize_transcript):
         mock_summarize_transcript.return_value = "summary"
-        response = self.app.post('/backend/video_id', json = {'video_id': 'video123', 'request_type': 'summary'})
+        response = self.app.post('/backend/video_id', json = {'video_id': 'q2SGW2VgwAM', 'request_type': 'summary'})
         self.assertEqual(response.status_code, 200)
         self.assertIn(f"Summary: {mock_summarize_transcript.return_value}", response.get_data(as_text=True))
 
     
-    @patch('app.generate_questions_from_summary')
+    @patch('app.create_apkg')
     def test_get_flashcards(self, mock_created_apkg):
         mock_created_apkg.return_value = "flashcards.apkg"
 
-        response = self.app.post('/backend/video_id', json = {'video_id': 'video123', 'request_type': 'flashcards'})
+        response = self.app.post('/backend/video_id', json = {'video_id': 'q2SGW2VgwAM', 'request_type': 'flashcards'}) # when you wake up put an actual video id here that might stop the traceback error 
         self.assertEqual(response.status_code, 200)
         self.assertIn(b"flashcards.apkg", response.data)
         self.assertEqual(mock_created_apkg.call_count, 1)

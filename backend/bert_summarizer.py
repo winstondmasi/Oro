@@ -6,12 +6,19 @@ def summarize_text(input):
 
     model = Summarizer()
 
-    if len(input) > 600:
+    if input is not None and len(input) > 600:
         result = model(input, min_length = 40)
-        return result
+        full = ''.join(result)
+        return full
     
-    return model(input)
+    elif input is not None and len(input) < 600:
+        result = model(input)
+        full = ''.join(result)
+        return full
 
+    else:
+        return None
+    
 # fetch, clean and summarize yt transcripts in one go
 def summarize_transcript( video_id):
 

@@ -14,6 +14,9 @@ build/
 # python virtual env
 myenv/
 
+question_generation/*
+!question_generation/
+
 # misc
 .DS_Store
 .env.local
