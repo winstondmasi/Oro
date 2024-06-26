@@ -1,4 +1,6 @@
 import unittest
+import tempfile
+import os
 
 from unittest.mock import patch, MagicMock
 
@@ -154,12 +156,19 @@ class TestFlaskGetSummaryOrFlashcards(unittest.TestCase):
     
     @patch('app.create_apkg')
     def test_get_flashcards(self, mock_created_apkg):
-        mock_created_apkg.return_value = "flashcards.apkg"
+        with tempfile. NamedTemporaryFile() as tmp:
+            tmp_name = tmp.name
+            mock_created_apkg.return_value = tmp_name
 
-        response = self.app.post('/backend/video_id', json = {'video_id': 'q2SGW2VgwAM', 'request_type': 'flashcards'}) # when you wake up put an actual video id here that might stop the traceback error 
-        self.assertEqual(response.status_code, 200)
-        self.assertIn(b"flashcards.apkg", response.data)
-        self.assertEqual(mock_created_apkg.call_count, 1)
+            response = self.app.post('/backend/video_id', json = {'video_id': 'q2SGW2VgwAM', 'request_type': 'flashcards'}) # when you wake up put an actual video id here that might stop the traceback error 
+            self.assertEqual(response.status_code, 200)
+
+            disposition = response.headers.get('Content-Disposition')
+            self.assertIn('attachment; filename=flashcards.apkg', disposition)
+            
+            self.assertEqual(mock_created_apkg.call_count, 1)
+        if os.path.exists(tmp_name):
+            os.remove(tmp_name)
     
 if __name__ == '__main__':
     unittest.main()

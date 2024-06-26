@@ -43,6 +43,7 @@ packaging==24.0
 pipeline==0.1.0
 pipelines==0.0.1
 preshed==3.0.9
+protobuf==5.27.1
 pydantic==2.7.3
 pydantic_core==2.18.4
 Pygments==2.18.0
@@ -53,6 +54,7 @@ rich==13.7.1
 safetensors==0.4.3
 scikit-learn==1.5.0
 scipy==1.13.1
+sentencepiece==0.2.0
 shellingham==1.5.4
 six==1.16.0
 smart-open==7.0.4

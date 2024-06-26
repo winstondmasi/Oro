@@ -8,17 +8,17 @@ import axios from 'axios';
 function App(){
 
   const[input, setInput] = useState('');
-  const[summary, SetSummary] = useState('');
-  const[flashcards, SetFlashcards] = useState(null);
+  const[summary, setSummary] = useState('');
+  const[flashcards, setFlashcards] = useState(null);
 
   // handle summary submission
   const handleSubmit = async (event) =>{
     event.preventDefault();
     try {
-      const response = axios.post('http://127.0.0.1:5000/backend/video_id', { video_id: input ,  request_type: 'summary'});
-      SetSummary(response.data.response);
+      const response = await axios.post('http://127.0.0.1:5000/backend/video_id', { video_id: input ,  request_type: 'summary'});
+      setSummary(response.data.response);
     } catch (error) {
-      console.error('Error fetching data:', error);
+      console.error('Error fetching summarized data:', error);
     }
   }
 
@@ -26,10 +26,11 @@ function App(){
   const handleGenerateFlashcards = async (event) =>{
     event.preventDefault();
     try {
-      const response = axios.post('http://127.0.0.1:5000/backend/video_id', { video_id: input ,  request_type: 'flashcards'});
-      SetFlashcards(response.data.response);
+      const response = await axios.post('http://127.0.0.1:5000/backend/video_id', { video_id: input ,  request_type: 'flashcards'}, { responseType: 'blob' });
+      const url = window.URL.createObjectURL(new Blob[response.data])
+      setFlashcards(url);
     } catch (error) {
-      console.error('Error fetching data:', error);
+      console.error('Error fetching flashcards data:', error);
     }
   }
   

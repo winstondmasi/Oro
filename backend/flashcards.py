@@ -1,8 +1,9 @@
 import genanki 
+import os
 
-from extract_youtube import *
-from bert_summarizer import *
-from question_generator import *
+from backend.extract_youtube import *
+from backend.bert_summarizer import *
+from backend.question_generator import *
 
 
 
@@ -16,7 +17,7 @@ def create_model(model_id, model_name):
             {'name' : 'question'},
             {'name' : 'answer'},
         ],
-        template=[
+        templates=[
             {
                 'name':'Card 1',
                 'qfmt': '{{question}}',
@@ -55,7 +56,16 @@ def create_apkg(deck_name, model_name, cards, output_file):
     model = create_model(model_id, model_name)
     deck = create_deck(deck_id, deck_name)
     add_cards_to_anki(deck, model, cards)
-    write_deck_to_file(deck, output_file)
+
+    output_path = os.path.join(output_file)
+    write_deck_to_file(deck, output_path)
+
+    if os.path.exists(output_path):
+        print(f"File created successfully: {output_path}")
+    else:
+        print(f"Failed to create file: {output_path}")
+
+    return output_path
 
 
 '''

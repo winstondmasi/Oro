@@ -1,9 +1,9 @@
 from flask import Flask, render_template, request, send_file, url_for, jsonify
 from flask_cors import CORS 
 
-from bert_summarizer import *
-from flashcards import *
-from question_generator import generate_questions_from_summary, dict_to_tuple
+from backend.bert_summarizer import *
+from backend.flashcards import *
+from backend.question_generator import generate_questions_from_summary, dict_to_tuple
 
 import traceback
 
@@ -41,9 +41,12 @@ def get_summary_or_flashcards():
 
             tuple_cards = dict_to_tuple(dict_cards)
 
-            flashcards = create_apkg('Deck', 'Summary', tuple_cards, 'flashcards.apkg')
+            flashcards_path = create_apkg('Deck', 'Summary', tuple_cards, 'flashcards.apkg')
 
-            return send_file(flashcards, as_attachment=True,download_name='flashcards.apkg') 
+            if flashcards_path and os.path.exists(flashcards_path):
+                return send_file(flashcards_path, as_attachment=True,download_name='flashcards.apkg') 
+            else:
+                return jsonify(error="Failed to create flashcards"), 500
         
         elif request_type == 'summary':
 
