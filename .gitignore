@@ -17,6 +17,9 @@ myenv/
 question_generation/*
 !question_generation/
 
+#ignore .vscode
+.vscode/
+
 # misc
 .DS_Store
 .env.local
