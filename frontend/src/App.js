@@ -9,7 +9,6 @@ function App(){
 
   const[input, setInput] = useState('');
   const[summary, setSummary] = useState('');
-  const[flashcards, setFlashcards] = useState(null);
 
   // handle summary submission
   const handleSubmit = async (event) =>{
@@ -28,7 +27,12 @@ function App(){
     try {
       const response = await axios.post('http://127.0.0.1:5000/backend/video_id', { video_id: input ,  request_type: 'flashcards'}, { responseType: 'blob' });
       const url = window.URL.createObjectURL(new Blob[response.data])
-      setFlashcards(url);
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', 'flashcards.apkg');
+      document.body.appendChild(link);
+      link.click();
+      link.parentNode.removeChild(link);
     } catch (error) {
       console.error('Error fetching flashcards data:', error);
     }
@@ -63,11 +67,6 @@ function App(){
             <button className="bg-purple hover:bg-purple-700 text-white text-2xl font-bold py-2 px-4 rounded" onClick={handleGenerateFlashcards}>
               Flash cards to Download here
             </button>
-            {flashcards && (
-              <a href={flashcards} download={"flashcards.apkg"}>
-                Download Flashcards
-              </a>
-            )}
           </div>
           <div />
         </div>

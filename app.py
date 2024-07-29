@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, send_file, url_for, jsonify
+from flask import Flask, request, send_file, send_from_directory, jsonify
 from flask_cors import CORS 
 
 from backend.bert_summarizer import *
@@ -7,12 +7,18 @@ from backend.question_generator import generate_questions_from_summary, dict_to_
 
 import traceback
 
-app = Flask(__name__)
+app = Flask(__name__, static_folder='frontend/build')
 CORS(app)
 
+# Serve the index.html file
 @app.route('/')
-def home():
-    return render_template('index.html')
+def serve():
+    return send_from_directory(app.static_folder, 'index.html')
+
+# Serve static files
+@app.route('/<path:path>')
+def static_proxy(path):
+    return send_from_directory(app.static_folder, path)
 
 @app.route('/backend/video_id', methods=['POST'])
 def get_summary_or_flashcards():
