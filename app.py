@@ -7,7 +7,7 @@ from backend.question_generator import generate_questions_from_summary, dict_to_
 
 import traceback
 
-app = Flask(__name__, static_folder='../frontend/build')
+app = Flask(__name__, static_folder='frontend/build')
 CORS(app)
 
 # Serve the index.html file
