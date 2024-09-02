@@ -22,11 +22,11 @@ function App(){
   }
 
   // handle flashcard generation
-  const handleGenerateFlashcards = async (event) =>{
+  const handleGenerateFlashcards = async (event) => {
     event.preventDefault();
     try {
-      const response = await axios.post('http://127.0.0.1:5000/backend/video_id', { video_id: input ,  request_type: 'flashcards'}, { responseType: 'blob' });
-      const url = window.URL.createObjectURL(new Blob[response.data])
+      const response = await axios.post('http://127.0.0.1:5000/backend/video_id', { video_id: input, request_type: 'flashcards' }, { responseType: 'blob' });
+      const url = window.URL.createObjectURL(new Blob([response.data]));
       const link = document.createElement('a');
       link.href = url;
       link.setAttribute('download', 'flashcards.apkg');
@@ -56,11 +56,11 @@ function App(){
               <button className="bg-primary hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" onClick={handleSubmit}>⏎</button>
             </div>
             <div className="text-gray-400">
-              Note: Don't enter full url
-              <br />
-              <br /> DON'T: https://www.youtube.com/watch?v=9bZkp7q19f0
-              <br /> 
-              <br /> DO: 9bZkp7q19f0
+              {/* Note: Don't enter full url */}
+              {/* <br /> */}
+              {/* <br /> DON'T: https://www.youtube.com/watch?v=9bZkp7q19f0 */}
+              {/* <br /> */}
+              {/* <br /> DO: 9bZkp7q19f0 */}
             </div>
           </div>
           <div className="bg-gray-800 rounded-lg p-6 flex flex-col gap-4 justify-center items-center ml-20">

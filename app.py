@@ -44,9 +44,10 @@ def get_summary_or_flashcards():
         if request_type == 'flashcards':
 
             dict_cards = generate_questions_from_summary(video_id)
-
+            if not dict_cards:
+                return jsonify(error="No questions could be generated from the summary"), 400
+            print("Generated cards:", dict_cards) 
             tuple_cards = dict_to_tuple(dict_cards)
-
             flashcards_path = create_apkg('Deck', 'Summary', tuple_cards, 'flashcards.apkg')
 
             if flashcards_path and os.path.exists(flashcards_path):

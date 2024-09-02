@@ -35,8 +35,9 @@ def create_deck(deck_id, deck_name):
 
 # add cards to anki
 def add_cards_to_anki(deck, model, cards):
-
+    print(f"Adding {len(cards)} cards to the deck") 
     for question, answer in cards:
+        print(f"Adding card - Q: {question}, A: {answer}")  
         note = genanki.Note(
             model=model,
             fields=[question, answer]
@@ -47,6 +48,8 @@ def add_cards_to_anki(deck, model, cards):
 def write_deck_to_file(deck, output_file):
     package = genanki.Package(deck)
     package.write_to_file(output_file)
+    print(f"Anki package written to {output_file}")  
+    print(f"Number of cards in the deck: {len(deck.notes)}")  
 
 # put all the small functions together to create apkg file for anki
 def create_apkg(deck_name, model_name, cards, output_file):
@@ -66,17 +69,3 @@ def create_apkg(deck_name, model_name, cards, output_file):
         print(f"Failed to create file: {output_path}")
 
     return output_path
-
-
-'''
-Example Call
-deck_name = "test"
-model_name = "test"
-cards = [
-    ("What is the capital of France?", "Paris"),
-    ("What is 2 + 2?", "4"),
-    ("Who wrote 'To Kill a Mockingbird'?", "Harper Lee")
-]
-output_file = "test.apkg"
-create_apkg(deck_name, model_name, cards, output_file)
-'''
